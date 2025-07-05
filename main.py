@@ -65,8 +65,7 @@ def proxy_tts():
             Bucket=AWS_BUCKET,
             Key=s3_key,
             Body=audio_bytes,
-            ContentType="audio/{data.get('format', 'mp3')}",
-            ACL="public-read"
+            ContentType="audio/{data.get('format', 'mp3')}"
         )
 
         audio_url = f"{AWS_S3_DOMAIN}/{s3_key}"
