@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: fish-audio-proxy
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: PROXY_TOKEN
+        value: your_proxy_token_here
+      - key: FISH_API_KEY
+        value: your_fish_audio_api_key_here

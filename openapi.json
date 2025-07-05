@@ -1,0 +1,51 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FishAudio TTS Proxy",
+    "version": "1.0.0",
+    "description": "通过代理安全调用 Fish.Audio 接口进行文字转语音。"
+  },
+  "paths": {
+    "/proxy/tts": {
+      "post": {
+        "summary": "文字转语音",
+        "operationId": "textToSpeech",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["proxy_token", "text", "reference_id"],
+                "properties": {
+                  "proxy_token": { "type": "string" },
+                  "text": { "type": "string" },
+                  "reference_id": { "type": "string" },
+                  "format": { "type": "string", "default": "mp3" },
+                  "speed": { "type": "number", "default": 1.0 },
+                  "pitch": { "type": "number", "default": 1.0 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "返回语音 Base64 编码",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "audio_base64": { "type": "string" },
+                    "format": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
