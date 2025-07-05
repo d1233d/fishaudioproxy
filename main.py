@@ -52,18 +52,17 @@ def proxy_tts():
     if resp.status_code != 200:
         return jsonify({"error": "Fish.Audio API failed", "details": resp.text}), 500
     fish_data = resp.content
-
+    content_type = resp.headers.get("Content-Type", "audio/mpeg")
     
     try:
-        audio_bytes =  base64.b64decode(fish_data)
         filename = f"{uuid.uuid4().hex}.{data.get('format', 'mp3')}"
         s3_key = f"tts_outputs/{filename}"
 
         s3_client.put_object(
             Bucket=AWS_BUCKET,
             Key=s3_key,
-            Body=audio_bytes,
-            ContentType="audio/mpeg"
+            Body=fish_data,
+            ContentType= content_type
         )
 
         audio_url = f"{AWS_S3_DOMAIN}/{s3_key}"
