@@ -7,7 +7,6 @@ import os
 app = Flask(__name__)
 
 PROXY_TOKEN = os.getenv("PROXY_TOKEN")
-FISH_API_KEY = os.getenv("FISH_API_KEY")
 FISH_API_URL = "https://api.fish.audio/v1/tts"
 
 @app.route("/")
@@ -26,9 +25,9 @@ def proxy_tts():
     }
 
     headers = {
-        "Authorization": "Bearer "+data.get("fish_api_key"),
+        "Authorization": data.get("fish_api_key"),
         "Content-Type": "application/json",
-        "model":data.get("model"),
+        "model": data.get("model")
     }
 
     resp = requests.post(FISH_API_URL, json=payload, headers=headers)
