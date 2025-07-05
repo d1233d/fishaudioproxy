@@ -52,3 +52,7 @@ def openapi():
 @app.route("/logo.png")
 def logo():
     return send_file("logo.png", mimetype="image/png")
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
