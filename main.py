@@ -51,9 +51,11 @@ def proxy_tts():
     resp = requests.post(FISH_API_URL, json=payload, headers=headers)
     if resp.status_code != 200:
         return jsonify({"error": "Fish.Audio API failed", "details": resp.text}), 500
-    fish_data = fish_resp.json()
+    fish_data = resp.json()
+
     if "audio_base64" not in fish_data:
         return jsonify({"error": "Invalid response from fish.audio"}), 500
+    
     try:
         audio_bytes =  base64.b64decode(fish_data["audio_base64"])
         filename = f"{uuid.uuid4().hex}.{data.get('format', 'mp3')}"
