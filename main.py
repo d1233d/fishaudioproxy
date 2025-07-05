@@ -3,8 +3,24 @@ import requests
 import io
 import base64
 import os
+import boto3
+from botocore.exceptions import BotoCoreError
 
 app = Flask(__name__)
+
+AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION", "ap-southeast-1")
+AWS_BUCKET = os.getenv("AWS_S3_BUCKET")
+AWS_S3_DOMAIN = os.getenv("AWS_S3_DOMAIN")
+
+s3_client = boto3.client(
+    "s3",
+    aws_access_key_id=AWS_ACCESS_KEY,
+    aws_secret_access_key=AWS_SECRET_KEY,
+    region_name=AWS_REGION
+)
+
 
 PROXY_TOKEN = os.getenv("PROXY_TOKEN")
 FISH_API_URL = "https://api.fish.audio/v1/tts"
@@ -38,10 +54,29 @@ def proxy_tts():
     audio_data = resp.content
     audio_base64 = base64.b64encode(audio_data).decode("utf-8")
 
-    return jsonify({
-        "audio_base64": audio_base64,
-        "format": payload["format"]
-    })
+
+    try:
+        audio_bytes = audio_base64
+        filename = f"{uuid.uuid4().hex}.{data.get('format', 'mp3')}"
+        s3_key = f"tts_outputs/{filename}"
+
+        s3_client.put_object(
+            Bucket=AWS_BUCKET,
+            Key=s3_key,
+            Body=audio_bytes,
+            ContentType="audio/{data.get('format', 'mp3')}",
+            ACL="public-read"
+        )
+
+        audio_url = f"{AWS_S3_DOMAIN}/{s3_key}"
+
+        return jsonify({
+            "audio_url": audio_url
+        })
+    except BotoCoreError as e:
+        return jsonify({"error": "Upload failed: {str(e)}"}), 500
+
+
 
 @app.route("/openapi.json")
 def openapi():
