@@ -23,14 +23,12 @@ def proxy_tts():
     payload = {
         "text": data.get("text"),
         "reference_id": data.get("reference_id"),
-        "format": data.get("format", "mp3"),
-        "speed": data.get("speed", 1.0),
-        "pitch": data.get("pitch", 1.0),
     }
 
     headers = {
-        "Authorization": "Bearer {FISH_API_KEY}",
-        "Content-Type": "application/json"
+        "Authorization": "Bearer "+data.get("fish_api_key"),
+        "Content-Type": "application/json",
+        "model":data.get("model"),
     }
 
     resp = requests.post(FISH_API_URL, json=payload, headers=headers)
