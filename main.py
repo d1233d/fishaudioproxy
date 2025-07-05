@@ -29,7 +29,7 @@ def proxy_tts():
     }
 
     headers = {
-        "Authorization": f"Bearer {FISH_API_KEY}",
+        "Authorization": "Bearer {FISH_API_KEY}",
         "Content-Type": "application/json"
     }
 
