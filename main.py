@@ -68,7 +68,8 @@ def proxy_tts():
         audio_url = f"{AWS_S3_DOMAIN}/{s3_key}"
 
         return jsonify({
-            "audio_url": audio_url
+            "audio_url": audio_url,
+            "text": data.get("text")
         })
     except BotoCoreError as e:
         return jsonify({"error": "Upload failed: {str(e)}"}), 500
